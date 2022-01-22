@@ -5,29 +5,75 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
+import com.example.roomdb.book.Book
+import com.example.roomdb.book.BookDao
+import com.example.roomdb.book.BookDatabase
+import com.example.roomdb.databinding.ActivityMainBinding
+import com.example.roomdb.student.Student
+import com.example.roomdb.student.StudentDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var bookDao: BookDao
+
+    // ->BookDatabase
+    //private lateinit var bookDao: BookDao
+
+
+    lateinit var mainBinding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        mainBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(mainBinding.root)
 
-        val db = Room.databaseBuilder(
+        /* ->BookDatabase
+
+            val db = Room.databaseBuilder(
             applicationContext,
             BookDatabase::class.java, "book_database"
         ).build()
 
         bookDao=db.bookDao()
-        testDb()
+         */
+
+        val studentDatabase = StudentDatabase.getStudentDatabase(this)
+
+
+        mainBinding.buttonSave.setOnClickListener {
+
+            val name = mainBinding.editTextStudentName.text.toString()
+            val grade = Integer.valueOf(mainBinding.editTextTextStudentGrade.text.toString())
+
+            val student = Student(studentName = name, studentGrade = grade)
+            studentDatabase?.studentDao()?.insert(student)
+
+        }
+
+        mainBinding.buttonAllStudent.setOnClickListener {
+
+            var result = ""
+
+            val students: ArrayList<Student> =
+                studentDatabase?.studentDao()?.getAllStudent() as ArrayList<Student>
+
+            students.forEach {
+
+                result += it.studentName + "->" + it.studentGrade + "\n"
+            }
+
+            mainBinding.textViewResult.text = result
+        }
+
+    }
+
+
 
     }
 
     //Dao arayüzünde tanımladığımız veritabanı fonksiyonlarını test etmek için bir fonksiyon
-
-
-    private fun testDb(){
+    //Book-Database
+    /*
+        private fun testDb(){
 
         //Arkaplanda çalıştırmak için: coroutine,launch
         lifecycleScope.launch(Dispatchers.IO) {
@@ -70,5 +116,7 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+     */
 
-}
+
+

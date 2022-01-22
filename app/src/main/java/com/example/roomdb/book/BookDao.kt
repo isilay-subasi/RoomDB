@@ -1,6 +1,7 @@
-package com.example.roomdb
+package com.example.roomdb.book
 
 import androidx.room.*
+import com.example.roomdb.book.Book
 
 
 @Dao
